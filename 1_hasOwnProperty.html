@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>hasOwnProperty</title>
+	<script type="text/javascript">
+		window.onload = function() {
+			// line25 => hasOwnProperty   = ObjProto.hasOwnProperty;
+			// hasOwnProperty 是 Object.prototype 中的一个方法，这个方法表示什么意思呢？
+			// 下面是MDN对于这个方法的解释翻译，链接：https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty
+
+			// hasOwnProperty() 方法返回一个布尔值，用于表明对象是否具有某个指定的属性。
+			// ## 语法
+				// obj.hasOwnProperty(prop)
+				// ### 参数
+				// prop：要测试的属性的字符串名称或者 Symbol。关于 Symbol，本文档最后会做说明。
+				// ### 返回值
+				// 一个布尔值，用于表明对象是否拥有某个指定的属性。
+			// ## 描述
+				// 每一个对象都会从 Object 继承 hasOwnProperty() 方法。这个方法，这个方法用于判断该对象是否拥有某个指定的属性，作为这个对象所直接拥有的属性；并不像 in 操作符一样，该方法不会依次去检查对象的原型链。//关于 in 操作符本文后会有备注。
+			// ## 例子
+				// ## 使用 hasOwnProperty 来检测某个属性是否存在
+				// 下面的例子用于检测 o 这个对象是否拥有 prop 这个属性：
+				o = new Object();
+				o.prop = 'exists';
+
+				function changeO() {
+					o.newprop = o.prop;
+					delete o.prop;
+				}
+
+				o.hasOwnProperty('prop');  // return true
+				changeO();
+				o.hasOwnProperty('prop');  // return false
+
+				// ## 直接属性 versus 继承属性
+				o = new Object();
+				o.prop = 'exists';
+				o.hasOwnProperty('prop');             // return true
+				o.hasOwnProperty('toString');         // return false
+				o.hasOwnProperty('hasOwnProperty');  // return false
+
+				// ## 遍历一个对象的所有属性
+				// 下面的例子展示了如何去遍历一个对象的所有属性而不去执行继承属性。注意，for...in 遍历方式已经是只遍历可数项目（enumerable item）了，所以，so one should not assume based on the lack of non-enumerable properties shown in the loop that hasOwnProperty itself is confined strictly to enumerable items (as with Object.getOwnPropertyNames()).
+				var buz = {
+					frog: "stack"
+				};
+				for(var name in buz) {
+					if (buz.hasOwnProperty(name)) {
+						console.log('this is fog (' + name + ') for sure. Value: ' + buz[name]);
+					} else {
+						console.log(name); // toString or something else
+					}
+				}
+
+				// ## 使用 hasOwnProperty 作为属性的名称
+				// JS 并不会保护 hasOwnProperty 这个属性名；因此，当一个对象拥有一个这样的属性名称时，有必要使用外部的 hasOwnProperty 来获得正确的结果。
+				var foo = {
+					hasOwnProperty: function() {
+						return false;
+					},
+					bar: 'Here be dragons'
+				}
+
+				foo.hasOwnProperty('bar'); // always return false
+				// 使用其他对象的 hasOwnProperty 方法来调用，将 this 设置为 foo
+				({}).hasOwnProperty.call(foo, 'bar'); // true，注意，这里空对象必须用小括号抱起来
+				// 也可是使用 Object 原型中的 hasOwnProperty 方法来实现这样的目的
+				Object.prototype.hasOwnProperty.call(foo, 'bar');  // true
+
+				// 注意在最后一种情况下，并没有创建新的对象。
+
+			// 总结：从上面的文章我们可以总结出几点：
+			// 1. hasOwnProperty() 方法检测的是一个对象的可数的直接属性，属性必须是 enumerable 的，而且是直接属性，不会从原型链上去寻找。
+			// 2. 为了避免影子属性对原型链属性的影响，可以使用空对象 {} 或者对象原型 Object.prototype，结合 call 或者 apply 方法实现一些功能。
+
+			// 这篇文章引申出下面几个问题，需要探讨：
+			// 1.什么是对象的 enumerable item。
+			// 2.in 操作符相关：https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/in
+			// 3. symbol相关，https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol
+
+		};
+		// window.onload end
+	</script>
+</head>
+<body>
+	
+</body>
+</html>
