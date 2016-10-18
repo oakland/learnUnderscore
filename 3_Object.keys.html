@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>3_Object.keys</title>
+	<script type="text/javascript">
+		// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys
+		// 根据 MDN 的连接翻译而来
+		// Object.keys() 方法返回一个指定对象的 enumerable properties 组成的数组，顺序和 for...in 遍历中的顺序是一样的，不同点在于，for...in 遍历会枚举原型链中的属性。
+
+		// ## 语法
+		Object.keys(obj)
+			// ### 参数
+				// #### obj
+				// 要返回自身可枚举属性的对象
+
+			// ### 返回值
+			// 字符串组成的数组，指定对象的所有可枚举属性。
+		// ## 描述
+		// Object.keys() 会返回一个数组，数组的元素是对象的直接可枚举属性的字符串。元素的顺序和手动遍历对象属性时的顺序一致。
+
+		// ## 例子
+		var arr = ['a', 'b', 'c'];
+		console.log(Object.keys(arr)); // console: ['0', '1', '2']
+
+		// array like object
+		var obj = { 0: 'a', 1: 'b', 2: 'c' };
+		console.log(Object.keys(obj)); // console: ['0', '1', '2']
+
+		// array like object with random key ordering
+		var an_obj = { 100: 'a', 2: 'b', 7: 'c' };
+		console.log(Object.keys(an_obj)); // console: ['2', '7', '100']
+
+		// getFoo is property which isn't enumerable
+		var my_obj = Object.create({}, { getFoo: { value: function() { return this.foo; } } });
+		my_obj.foo = 1;
+
+		console.log(Object.keys(my_obj)); // console: ['foo']
+
+		// ======steam comment 上面这段例子的代码中，有几个比较有意思的地方
+		// 1. array like object with random key ordering中，获得的属性顺序是从小到大排列的。
+		// 2. 不可枚举的属性无法被 Object.keys() 获取，其中使用了一个 Object.create() 方法，这个方法可以再探讨下。
+
+		// 如果你需要所有的属性，包括哪些不可枚举的属性，那么请参考 Object.getOwnPropertyNames()。
+
+		// ## 注意
+		// 在ES5中，如果这个方法传入的参数不是一个对象，会导致 TypeError 的错误。在ES6中，一个不是对象的参数会被强制转化为一个对象。
+		Object.keys("foo");
+		// TypeError: "foo" is not an object (ES5 code)
+
+		Object.keys("foo");
+		// ["0", "1", "2"]                   (ES6 code)
+
+		// ## Polyfill
+		// 要想添加一个可以兼容无法支持原生旧环境的 Object.keys() 方法，可以拷贝下面的代码段：
+
+		// From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys
+		if (!Object.keys) {
+		  Object.keys = (function() {
+		    'use strict';
+		    var hasOwnProperty = Object.prototype.hasOwnProperty,
+		        hasDontEnumBug = !({ toString: null }).propertyIsEnumerable('toString'),
+		        dontEnums = [
+		          'toString',
+		          'toLocaleString',
+		          'valueOf',
+		          'hasOwnProperty',
+		          'isPrototypeOf',
+		          'propertyIsEnumerable',
+		          'constructor'
+		        ],
+		        dontEnumsLength = dontEnums.length;
+
+		    return function(obj) {
+		      if (typeof obj !== 'object' && (typeof obj !== 'function' || obj === null)) {
+		        throw new TypeError('Object.keys called on non-object');
+		      }
+
+		      var result = [], prop, i;
+
+		      for (prop in obj) {
+		        if (hasOwnProperty.call(obj, prop)) {
+		          result.push(prop);
+		        }
+		      }
+
+		      if (hasDontEnumBug) {
+		        for (i = 0; i < dontEnumsLength; i++) {
+		          if (hasOwnProperty.call(obj, dontEnums[i])) {
+		            result.push(dontEnums[i]);
+		          }
+		        }
+		      }
+		      return result;
+		    };
+		  }());
+		}
+
+		// 请注意，上面的代码段包含了IE7（也可能是IE8）中的非枚举keys，当从一个不同的 window中传入一个对象的时候。Please note that the above code includes non-enumerable keys in IE7 (and maybe IE8), when passing in an object from a different window.
+		// For a simple Browser Polyfill, see [Javascript - Object.keys Browser Compatibility](http://tokenposts.blogspot.com.au/2012/04/javascript-objectkeys-browser.html).
+
+	</script>
+</head>
+<body>
+	
+</body>
+</html>
