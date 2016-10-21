@@ -1,0 +1,4 @@
+1. html5 的 data 自定义属性。
+2. 查看 unify 模板中的一些小插件，比如 circle.js ，包括源码，包括如何使用。
+3. unify 的 page_home12.html中，有一个 why we are good 部分，会有个动态的进度条一样的样子，需要实现一下。可以放在一个新的仓库，比如叫做 css 样式，可以写一些和 css 相关的文章以及示例，一些 css3 的特性可以写在里面，比如 flexbox 这些。
+4. BEM 命名法则，用于命名 CSS 命名。

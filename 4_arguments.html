@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>4_arguments</title>
+	<script type="text/javascript">
+		//参考 MDN 关于 arguments 对象的说明
+		// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/arguments
+
+		// arguments 是一个类数组对象，指的是传入函数中的参数。
+		// ## 语法
+		// arguments
+		// ## 描述
+		// arguments 对象是所有函数都有的，在函数内部的一个局部变量。你可以通过使用 arguments 对象来在函数内部引用传入函数的参数。这个对象包含了传入函数中的每一个参数的入口，第一个入口的索引值从0开始。例如，如果一个函数传入了三个参数，你可以使用下面的方式来获取他们：
+		arguments[0]
+		arguments[1]
+		arguments[2]
+		// 也可以对 arguments 进行设置：
+		arguments[1] = 'new value';
+		// arguments 对象不是一个数组。它类似于一个数组，但是除了拥有 length 属性之外，没有任何数组的其他属性（例如push, pop, shift, unshift, slice, splice, concat 等等）。例如，它没有 pop 方法，但是它却可以被转化成真正的数组：
+		var args = Array.prototype.slice.call(arguments);
+		// 你也可以使用 Array.from() 方法或者 spread 操作符来讲 arguments 转化为真正的数组：
+		var args = Array.from(arguments);
+		var args = [...arguments];
+		// 在某些JS引擎中（比如V8引擎（https://github.com/petkaantonov/bluebird/wiki/Optimization-killers#3-managing-arguments）），对 arguments 使用 slice 会组织优化。如果你介意这方面的事情，你可以尝试通过遍历 arguments 对象来新建一个数组。另外一种可能的方式就是使用伪数组构造器作为函数。
+		var args = (arguments.length === 1 ? [arguments[0]] : Array.aplly(null, arguments));
+		// 如果你调用一个函数时，参数的个数多于这个函数声明时所接受的参数个数，那么你也可以使用 arguments 对象。这个技术，对于那些可以传入多个参数的函数是非常有用的。你可以使用 arguments.length 来判断传入函数的参数个数，接着使用 arguments 来处理每一个参数。要判断传入函数签名的参数个数，可以使用 Function.length（这个其实指的是形参的个数）。
+		// typeof arguments 返回 'object'
+		console.log(typeof arguments); // 'object'
+		// 可以使用索引来判断每个参数的类型
+		console.log(typeof arguments[0]); // 返回单个参数的类型
+		// ## 属性
+		arguments.callee
+			// 指向当前所执行的函数
+		arguments.caller
+			// 指向调用当前函数的函数
+		arguments.length
+			// 传入到函数中的实际参数数量
+		arguments[@@iterator]
+			// 返回一个数组遍历对象，包含arguments 的所有索引的值。
+		// ## 例子
+			// ### 定义一个连接多个字符串的函数
+			// 本例定义了一个可以连接多个字符串的函数。函数唯一的正式的参数就是一个字符串，这个字符串用于分割要连接的参数项目。函数定义如下：
+			function myConcat(seperator) {
+				var args = Array.prototype.slice.call(arguments, 1);
+				return args.join(seperator);
+			}
+			// 你可以向这个函数中传递任意个数的参数，并创建一个拥有每个参数作为项目的数组
+			// returns "red, orange, blue"
+			myConcat(", ", "red", "orange", "blue");
+
+			// returns "elephant; giraffe; lion; cheetah"
+			myConcat("; ", "elephant", "giraffe", "lion", "cheetah");
+
+			// returns "sage. basil. oregano. pepper. parsley"
+			myConcat(". ", "sage", "basil", "oregano", "pepper", "parsley");
+			// ### 定义一个创建 HTML 数组的函数
+			// 本例将会创建一个创建 HTML 列表的函数。本函数唯一正式的参数是 "u" 或者 "o"，当使用 "u" 的时候创建的是无序列表，使用 "o" 的时候创建的是有序列表。函数定义如下：
+			function list(type) {
+				var result = '<' + type + 'l><li>';
+				var args = Array.prototype.slice.call(arguments);
+				result += args.join('</li><li>');
+				result += '</li><' + type + 'l>'; //end list
+
+				return result;
+			}
+
+			// 你可以给这个函数传入任意个数的参数，它会将每一个参数都当做列表的项目。例如：
+			var listHTML = list("u", "One", "Two", "Three");
+
+			/* listHTML is:
+
+			"<ul><li>One</li><li>Two</li><li>Three</li></ul>"
+
+			*/
+
+			// ### Rest, default and destructured parameters
+			// arguments 对象可以结合 rest, default, destructured parameters 使用。
+			function foo(...args) {
+				return arguments;
+			}
+			foo(1, 2, 3); // { "0": 1, "1": 2, "2": 3 }
+
+			// 然而，在非严格模式下，只有当一个函数不包含任何 rest parameters，或者 default parameters 或者任何其他 destructured parameters 的时候，一个 mapped arguments object 才会提供。例如，在下面使用了 default parameter 的函数中，返回值是10，而不是100：
+			function bar(a=1) {
+				arguments[0] = 100;
+				return a;
+			}
+			bar(10); // 10
+			// 在本例中，函数既没有 rest parameter，也没有 default parameter，更没有 destructured parameters，因此返回100：
+			function zoo(a) {
+				arguments[0] = 100;
+				return a;
+			}
+			zoo(10); // 100
+			// 实际上，如果没有 rest, default, destructured parameters，arguments 对象就会指向最新的值
+			// Actually if there are no  rest parameters, any default parameters or any destructured parameters,  the formal arguments will refer the arguments object's latest values, when the formal arguments value needs to be read then arguments latest data will be read, and when formal arguments value changes, arguments will also be updated. See the code below: 
+			function func(a, b) {
+			    arguments[0] = 90;
+			    arguments[1] = 99;
+			    console.log(a + " " + b);
+			}
+
+			func(1, 2); //90, 99
+			// 或者
+			function func(a, b) {
+			    a = 9;
+			    b = 99;
+			    console.log(arguments[0] + " " + arguments[1]);
+			}
+
+			func(3, 4); //9, 99
+			// But if rest parameters, or any default parameters or any destructured parameters are present, then normal behaviour like default parameters will be proccessed. See,
+			function func(a, b, c=9) {
+			    arguments[0] = 99;
+			    arguments[1] = 98;
+			    console.log(a + " " + b);
+			}
+
+			func(3, 4); //3, 4
+	</script>
+</head>
+<body>
+	
+</body>
+</html>
