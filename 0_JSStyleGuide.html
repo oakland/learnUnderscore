@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>0_JSStyleGuide</title>
+	<script type="text/javascript">
+		// 在写 JS 的过程中，除了语言相关方面的能力和技巧方面之外，还有一些书写的风格，或者说规范也是我们学习的对象，比如：
+		var a = 0;
+		var b = 1; 
+		// 通常就会写成：
+		var a = 0,
+			b = 1;
+
+		// 显然，后一种写法更加简洁！在学习 underscore.js 源码的过程中，除了学习原生 JS 的基础知识，以及各种语言方面的技巧之外，我们还可以学习关于书写风格方面的内容。这里就对这些书写风格做出总结，并且记录下来，供日后实践中应用。
+
+		// ===== 1 ======
+		var ArrayProto = Array.prototype, ObjProto = Object.prototype, FuncProto = Function.prototype;
+		// 为了减少写一些重复的内容，可以将常用的原生 prototype 存储在缩写的变量中。而且，声明的时候在一行内声明，不需要换行。
+
+	    // ===== 2 ======
+	    // Create quick reference variables for speed access to core prototypes.
+		  var
+		    push             = ArrayProto.push,
+		    slice            = ArrayProto.slice,
+		    toString         = ObjProto.toString,
+		    hasOwnProperty   = ObjProto.hasOwnProperty;
+		// 也是同样的情况，为了减少重复的输入，可以对一些内容进行缩写，但是这次是换行，而且将 = 放在同样的一个垂直位置上。
+
+		// ===== 3 ======
+		// All **ECMAScript 5** native function implementations that we hope to use
+		  // are declared here.
+		  var
+		    nativeIsArray      = Array.isArray,
+		    nativeKeys         = Object.keys,
+		    nativeBind         = FuncProto.bind,
+		    nativeCreate       = Object.create;
+		// 和 2 是同样的情况，不过，和 1 对比起来，为什么将 = 放在同一个垂直位置，是因为这几个赋值的内容是相差比较大的内容，而不是同类的，而 1 的内容都是将 prototype 进行缩写。
+	</script>
+</head>
+<body>
+	
+</body>
+</html>
