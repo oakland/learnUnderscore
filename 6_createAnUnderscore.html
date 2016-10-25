@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>6_createAnUnderscore</title>
+	<script type="text/javascript">
+		// Create a safe reference to the Underscore object for use below.
+		var _ = function(obj) {
+		  if (obj instanceof _) return obj;
+		  if (!(this instanceof _)) return new _(obj);
+		  this._wrapped = obj;
+		};
+
+		// 这个函数我反应了很久，最后实在没理解，用它创建了一个对象才知道是什么意思。这里面主要的坑主要就是 return 这个关键词。
+		// 通常 return 会直接结束这个函数，所以我一直没明白 this._wrapped = obj; 这个语句怎么会执行。最后才发现，坑在于当用 new 的时候，这个 this 是指向实例的。如果 obj 不是 _ 的实例的时候，if (!(this instanceof _)) return new _(obj); 中的 this 指向 window，而显然就会返回一个 new _(obj)。这个时候，this 就是 实例。那么，所以，this._wrapped = obj; 表示实例会有一个 _wrapped 属性，值为传入的对象这个参数。例如：
+
+		var inst = _({a:'hello'});
+		console.log(inst); // _ {_wrapped: Object}
+	</script>
+</head>
+<body>
+	
+</body>
+</html>
