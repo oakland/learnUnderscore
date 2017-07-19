@@ -5,8 +5,12 @@
 	<title>Document</title>
 	<script type="text/javascript" src="underscore.js"></script>
 	<script type="text/javascript">
-		var wrapped = _({a: 1});
-		console.log(wrapped);
+		var prot = {
+			a: 1,
+			b: 2
+		}
+		var u = _(prot);
+		console.log(u);
 		// console.log(window._wrapped);
 	</script>
 </head>
